@@ -1,22 +1,19 @@
 class DogModel {
-  String _message;
+  List<String> _message;
   String _status;
 
-  DogModel({String message, String status}) {
+  DogModel({List<String> message, String status}) {
     this._message = message;
     this._status = status;
   }
 
-  String get message => _message;
-
-  set message(String message) => _message = message;
-
+  List<String> get message => _message;
+  set message(List<String> message) => _message = message;
   String get status => _status;
-
   set status(String status) => _status = status;
 
   DogModel.fromJson(Map<String, dynamic> json) {
-    _message = json['message'];
+    _message = json['message'].cast<String>();
     _status = json['status'];
   }
 
