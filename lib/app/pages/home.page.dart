@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'package:doguinho/app/pages/imageview.page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:doguinho/app/models/dog.model.dart';
@@ -80,10 +81,22 @@ class _HomePageState extends State<HomePage> {
                     mainAxisSpacing: 6,
                     crossAxisSpacing: 6,
                   ),
-                  itemBuilder: (context, index) => Image.network(
-                    _images[index],
-                    fit: BoxFit.cover,
-                  ),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageViewPage(imageUrl: _images[index],),
+                          ),
+                        );
+                      },
+                      child: Image.network(
+                        _images[index],
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
                 ),
               ),
               Container(
@@ -103,15 +116,15 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> appbarOptions() {
     return <Widget>[
-          _loading == true
-              ? ButtonBar(
-                  children: <Widget>[
-                    CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                    ),
-                  ],
-                )
-              : Container(),
-        ];
+      _loading == true
+          ? ButtonBar(
+              children: <Widget>[
+                CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                ),
+              ],
+            )
+          : Container(),
+    ];
   }
 }
