@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'package:doguinho/app/pages/favorites.page.dart';
 import 'package:doguinho/app/pages/imageview.page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -87,7 +88,9 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ImageViewPage(imageUrl: _images[index],),
+                            builder: (context) => ImageViewPage(
+                              imageUrl: _images[index],
+                            ),
                           ),
                         );
                       },
@@ -125,6 +128,23 @@ class _HomePageState extends State<HomePage> {
               ],
             )
           : Container(),
+      IconButton(
+          icon: Icon(
+            Icons.favorite,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FavoritesPage()),
+            );
+          }),
+      IconButton(
+          icon: Icon(
+            Icons.info,
+            color: Colors.white,
+          ),
+          onPressed: null),
     ];
   }
 }
