@@ -11,8 +11,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> _images = [];
   GlobalKey<ScaffoldState> _globalKey = new GlobalKey<ScaffoldState>();
+  ScrollController _controller;
+  List<String> _images = [];
   bool _loading = false;
 
   _changeLoading() {
@@ -21,14 +22,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void getImages() {
-    String json =
-        '{"message": ["https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_728.jpg", "https://images.dog.ceo/breeds/shiba/shiba-10.jpg", "https://images.dog.ceo/breeds/retriever-golden/n02099601_78.jpg"], "status": "success"}';
-    final jsonMap = convert.jsonDecode(json);
-    DogModel dogs = DogModel.fromJson(jsonMap);
-    setState(() {
-      _images = dogs.message;
-    });
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      _getApiImages();
+    }
   }
 
   _getApiImages() async {
@@ -54,6 +52,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     _getApiImages();
   }
 
@@ -66,54 +66,46 @@ class _HomePageState extends State<HomePage> {
         actions: appbarOptions(),
       ),
       body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.blueGrey[900],
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.all(6),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: _images.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 6,
-                    crossAxisSpacing: 6,
-                  ),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageViewPage(
-                              imageUrl: _images[index],
-                            ),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.blueGrey[900],
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: GridView.builder(
+                controller: _controller,
+                padding: EdgeInsets.all(6),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: _images.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 6,
+                  crossAxisSpacing: 6,
+                ),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ImageViewPage(
+                            imageUrl: _images[index],
                           ),
-                        );
-                      },
-                      child: Image.network(
-                        _images[index],
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
+                        ),
+                      );
+                    },
+                    child: Image.network(
+                      _images[index],
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
               ),
-              Container(
-                child: FlatButton(
-                  color: Colors.orange,
-                  textColor: Colors.white,
-                  child: Text('Mais imagens'),
-                  onPressed: () {
-                    _getApiImages();
-                  },
-                ),
-              )
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
