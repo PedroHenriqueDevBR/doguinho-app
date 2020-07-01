@@ -121,22 +121,17 @@ class _HomePageState extends State<HomePage> {
             )
           : Container(),
       IconButton(
-          icon: Icon(
-            Icons.favorite,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FavoritesPage()),
-            );
-          }),
-      IconButton(
-          icon: Icon(
-            Icons.info,
-            color: Colors.white,
-          ),
-          onPressed: null),
+        icon: Icon(
+          Icons.favorite,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FavoritesPage()),
+          );
+        },
+      ),
     ];
   }
 }

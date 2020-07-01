@@ -1,8 +1,8 @@
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/rendering.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/rendering.dart';
 
 class ImageViewPage extends StatefulWidget {
   String imageUrl;
@@ -12,11 +12,16 @@ class ImageViewPage extends StatefulWidget {
 }
 
 class _ImageViewPageState extends State<ImageViewPage> {
-  bool favorite = false;
   GlobalKey<ScaffoldState> _globalKey = new GlobalKey<ScaffoldState>();
+  bool _loading = false;
+  bool favorite = false;
 
-  _saveImage() {
-    print('Implementar'); // TODO: implelementar o download das imagens
+  _openImageUrl() async {
+    final AndroidIntent intent = AndroidIntent(
+      action: 'action_view',
+      data: Uri.encodeFull(widget.imageUrl),
+    );
+    intent.launch();
   }
 
   Future<List<String>> _getFavorites() async {
@@ -84,6 +89,12 @@ class _ImageViewPageState extends State<ImageViewPage> {
     }
   }
 
+  _changeLoading() {
+    setState(() {
+      _loading = !_loading;
+    });
+  }
+
   @override
   void initState() {
     _isFavorite();
@@ -98,13 +109,13 @@ class _ImageViewPageState extends State<ImageViewPage> {
         elevation: 0,
         bottomOpacity: 0,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.info_outline,
-              color: Colors.white,
-            ),
-            onPressed: null,
-          ),
+          _loading
+              ? ButtonBar(
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                  ],
+                )
+              : Container(),
         ],
       ),
       body: Container(
@@ -162,11 +173,13 @@ class _ImageViewPageState extends State<ImageViewPage> {
                           onPressed: _changeFavorite),
                       IconButton(
                         icon: Icon(
-                          Icons.file_download,
+                          Icons.language,
                           size: 30,
                           color: Colors.white,
                         ),
-                        onPressed: _saveImage,
+                        onPressed: () {
+                          _openImageUrl();
+                        },
                       ),
                     ],
                   ),
